@@ -6,6 +6,7 @@ This repository contains our implementation of the *AdaDetect* method introduced
 Below is a short example demonstrating how to use it: 
 
 ```
+import numpy as np
 from sklearn.datasets import fetch_openml 
 from sklearn.ensemble import RandomForestClassifier
 from procedure import AdaDetectERM 
