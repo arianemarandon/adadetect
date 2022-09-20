@@ -7,7 +7,7 @@ Below is a short example demonstrating how to use it:
 
 ```
 from sklearn.datasets import fetch_openml 
-from sklearn.tree import RandomForest
+from sklearn.ensemble import RandomForestClassifier
 from procedure import AdaDetectERM 
 
 dataset = fetch_openml(name='creditcard', version=1, as_frame=False)
