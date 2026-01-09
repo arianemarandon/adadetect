@@ -1,9 +1,34 @@
 import numpy as np
 
 
+def BH(pvalues, level): 
+    """
+    Benjamini-Hochberg procedure. 
+    """
+    n = len(pvalues)
+    pvalues_sort_ind = np.argsort(pvalues) 
+    pvalues_sort = np.sort(pvalues) #p(1) < p(2) < .... < p(n)
+
+    comp = pvalues_sort <= (level* np.arange(1,n+1)/n) 
+    #get first location i0 at which p(k) <= level * k / n
+    comp = comp[::-1] 
+    comp_true_ind = np.nonzero(comp)[0] 
+    i0 = comp_true_ind[0] if comp_true_ind.size > 0 else n 
+    nb_rej = n - i0
+
+    return pvalues_sort_ind[:nb_rej]
+
 
 def EmpBH(null_statistics, test_statistics, level):
     """
+    """
+    pvalues = np.array([compute_pvalue(x, null_statistics) for x in test_statistics])
+    return BH(pvalues, level)
+
+def EmpBH_fast(null_statistics, test_statistics, level):
+    """
+    Note!! This implementation breaks down if scores are equal!!
+
     Algorithm 1 of "Semi-supervised multiple testing", Roquain & Mary : faster than computing p-values and applying BH
 
     test_statistics: scoring function evaluated at the test sample i.e. g(X_1), ...., g(X_m)
@@ -38,23 +63,6 @@ def EmpBH(null_statistics, test_statistics, level):
     return test_statistics_sort_ind[:K]
 
 
-def BH(pvalues, level): 
-    """
-    Benjamini-Hochberg procedure. 
-    """
-    n = len(pvalues)
-    pvalues_sort_ind = np.argsort(pvalues) 
-    pvalues_sort = np.sort(pvalues) #p(1) < p(2) < .... < p(n)
-
-    comp = pvalues_sort <= (level* np.arange(1,n+1)/n) 
-    #get first location i0 at which p(k) <= level * k / n
-    comp = comp[::-1] 
-    comp_true_ind = np.nonzero(comp)[0] 
-    i0 = comp_true_ind[0] if comp_true_ind.size > 0 else n 
-    nb_rej = n - i0
-
-    return pvalues_sort_ind[:nb_rej]
-    
 
 def adaptiveEmpBH(null_statistics, test_statistics, level, correction_type, storey_threshold=0.5):
 
